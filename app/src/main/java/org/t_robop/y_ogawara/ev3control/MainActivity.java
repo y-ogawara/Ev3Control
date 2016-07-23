@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         spinnerSetting();
-        connection();
+        //connection();
 
     }
     byte[] sendMessage(int num)
@@ -167,6 +168,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btn(View view) {
+        Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        vibrator.vibrate(20);
         switch (view.getId()){
             case R.id.front:
                 sendBluetooth(1);
@@ -233,12 +236,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     void spinnerSetting (){
+
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // アイテムを追加します
-        adapter.add("red");
-        adapter.add("green");
-        adapter.add("blue");
+        adapter.add("00:16:53:44:59:C0,eb3緑");
+        adapter.add("00:16:53:44:69:AB,ev3青");
+        //adapter.add("blue");
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
         // アダプターを設定します
         spinner.setAdapter(adapter);
@@ -250,31 +254,10 @@ public class MainActivity extends AppCompatActivity {
                 Spinner spinner = (Spinner) parent;
                 // 選択されたアイテムを取得します
                 String item = (String) spinner.getSelectedItem();
-                Toast.makeText(MainActivity.this, item, Toast.LENGTH_LONG).show();
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
-            }
-        });
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // アイテムを追加します
-        adapter.add("00:16:53:44:59:C0,eb3青");
-        adapter.add("00:16:53:44:69:AB,ev3緑");
-        adapter.add("blue");
-        spinner = (Spinner) findViewById(R.id.spinner);
-        // アダプターを設定します
-        spinner.setAdapter(adapter);
-        // スピナーのアイテムが選択された時に呼び出されるコールバックリスナーを登録します
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view,
-                                       int position, long id) {
-                Spinner spinner = (Spinner) parent;
-                // 選択されたアイテムを取得します
-                String item = (String) spinner.getSelectedItem();
-                Log.d("aaaaaaaaaaaaa",item);
-                Toast.makeText(MainActivity.this, item, Toast.LENGTH_LONG).show();
+                String test[] = item.split(",",0);
+                macAddress =test[0];
+                Log.d("aaaaaaaaaaaaa",macAddress);
+                //Toast.makeText(MainActivity.this, item, Toast.LENGTH_LONG).show();
             }
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
