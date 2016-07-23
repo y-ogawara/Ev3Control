@@ -6,7 +6,6 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -23,8 +22,6 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothDevice mBtDevice; // BTデバイス
     private BluetoothSocket mBtSocket; // BTソケット
     private OutputStream mOutput; // 出力ストリーム
-    //private Button btn1; // 送信ボタン
-    //byte[] tele;
 
     //00:16:53:44:69:AB   ev3 青
     //00:16:53:44:59:C0
@@ -34,13 +31,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         spinnerSetting();
-        //connection();
-
     }
-    byte[] sendMessage(int num)
-    {
+    byte[] sendMessage(int num) {
         byte[] tele = new byte[21];
-        //tele = new byte[21];
         tele[0] = (byte)19;
         tele[1] = (byte)0;
         tele[2] = (byte)0;
@@ -48,22 +41,8 @@ public class MainActivity extends AppCompatActivity {
         tele[4] = (byte)0;
         tele[5] = (byte)0;
         tele[6] = (byte)0;
-//        tele[7] = (byte)0;     //OUTPUT_POWER
-//        tele[8] = (byte)0;
-//        tele[9] = (byte)0;     //Motor ID = PortC
-//        tele[10] = (byte)0;     //Motor Power
-//        tele[11] = (byte)0;    //OUTPUT_START
-//        tele[12] = (byte)0;
-//        tele[13] = (byte)0;     //Motor ID = PortC
-//        tele[14] = (byte)0;     //OUTPUT_POWER
-//        tele[15] = (byte)0;
-//        tele[16] = (byte)0;     //Motor ID = PortD
-//        tele[17] = (byte)0;     //Motor Power
-//        tele[18] = (byte)0;    //OUTPUT_START
-//        tele[19] = (byte)0;
-//        tele[20] = (byte)0;
 
-
+        //止まるとき
         if (num == 0) {   //Stop Motors at PortC & D
             tele[7] = (byte)0xA4;     //OUTPUT_POWER
             tele[8] = (byte)0;
@@ -82,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
             tele[20] = (byte)8;     //Motor ID = PortD
         }
 
+        //進むとき
         if (num == 1) {    //Forward Motors at PortC & D
             tele[7] = (byte)0xA4;
             tele[8] = (byte)0x00;
@@ -99,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
             tele[19] = (byte)0;
             tele[20] = (byte)8;
         }
+        //バック
         if (num == 2) {    //Backward Motors at PortC & D
             tele[7] = (byte)0xA4;
             tele[8] = (byte)0x00;
@@ -117,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
             tele[20] = (byte)9;
         }
 
+        //右回転
         if (num == 3) {    //Turn Right = Forward Motor at PortC(Left) and Stop PortD(Right)
             tele[7] = (byte)0xA4;
             tele[8] = (byte)0x00;
@@ -134,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
             tele[19] = (byte)0;
             tele[20] = (byte)8;
         }
-
+        //左回転
         if (num == 4) {    //Turn Left = Forward Motor at PortD(Right) and Stop PortC(Left)
             tele[7] = (byte)0xA4;
             tele[8] = (byte)0x00;
@@ -152,8 +134,7 @@ public class MainActivity extends AppCompatActivity {
             tele[19] = (byte)0;
             tele[20] = (byte)8;
         }
-
-        //Log.d("sending","");
+        //byte配列を返す
         return tele;
     }
     @Override
@@ -168,24 +149,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btn(View view) {
+        //バイブレーションの宣言
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        //20ミリセックバイブする
         vibrator.vibrate(20);
         switch (view.getId()){
+            //前進するとき
             case R.id.front:
                 sendBluetooth(1);
                 break;
+            //止まるとき
             case R.id.stop:
                 sendBluetooth(0);
                 break;
+            //左回転するとき
             case R.id.left:
                 sendBluetooth(4);
                 break;
+            //右回転するとき
             case R.id.right:
                 sendBluetooth(3);
                 break;
+            //後ろに行くとき
             case R.id.back:
                 sendBluetooth(2);
                 break;
+            //接続するとき
             case R.id.connect:
                 connection();
                 break;
@@ -194,8 +183,7 @@ public class MainActivity extends AppCompatActivity {
     void sendBluetooth(int num){
         //ここで送信
         try {
-            //Log.d("aaaaaaaaaaaaaaaaaa",String.valueOf(sendMessage(num)));
-            //sendMessage(num);
+            //ここでBluetooth送信してる
             mOutput.write(sendMessage(num));
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -218,10 +206,10 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        //接続に成功したかどうか
         int connectFlag = 0;
-        // ソケットを接続する
         try {
-
+            // ソケットを接続する
             mBtSocket.connect();
             mOutput = mBtSocket.getOutputStream(); // 出力ストリームオブジェクトを得る
         } catch (IOException e) {
@@ -235,14 +223,16 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    //spinner設定用メソッド
     void spinnerSetting (){
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
+
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // アイテムを追加します
         adapter.add("00:16:53:44:59:C0,eb3緑");
         adapter.add("00:16:53:44:69:AB,ev3青");
-        //adapter.add("blue");
+        //スピナーの関連付け
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
         // アダプターを設定します
         spinner.setAdapter(adapter);
@@ -251,17 +241,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
+                //スピナーを宣言
                 Spinner spinner = (Spinner) parent;
-                // 選択されたアイテムを取得します
+                // 選択されたアイテムを取得
                 String item = (String) spinner.getSelectedItem();
-                String test[] = item.split(",",0);
-                macAddress =test[0];
-                Log.d("aaaaaaaaaaaaa",macAddress);
-                //Toast.makeText(MainActivity.this, item, Toast.LENGTH_LONG).show();
+                // , で文字を分割して保存
+                String addressArray[] = item.split(",",0);
+                //macAddressにaddressを入れる
+                macAddress =addressArray[0];
+                //Log.d("aaaaaaaaaaaaa",macAddress);
             }
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
-
             }
         });
     }
