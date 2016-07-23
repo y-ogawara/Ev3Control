@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
             tele[14] = (byte)0xA4;
             tele[15] = (byte)0x00;
             tele[16] = (byte)8;
-            tele[17] = (byte)70;
+            tele[17] = (byte)68;
             tele[18] = (byte)0xA6;
             tele[19] = (byte)0;
             tele[20] = (byte)8;
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
             tele[7] = (byte)0xA4;
             tele[8] = (byte)0x00;
             tele[9] = (byte)4;
-            tele[10] = (byte)70;
+            tele[10] = (byte)68;
             tele[11] = (byte)0xA6;
             tele[12] = (byte)0;
             tele[13] = (byte)4;
@@ -278,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
             }
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
-                
+
             }
         });
     }
