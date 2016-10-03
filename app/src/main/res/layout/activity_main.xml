@@ -37,8 +37,8 @@
             <Button
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:text="connect"
-                android:textSize="16dp"
+                android:text="接続"
+                android:textSize="25dp"
                 android:onClick="btn"
                 android:id="@+id/connect" />
             <Button

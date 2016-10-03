@@ -24,7 +24,8 @@ public class MainActivity extends AppCompatActivity {
     private OutputStream mOutput; // 出力ストリーム
 
     //00:16:53:44:69:AB   ev3 青
-    //00:16:53:44:59:C0
+    //00:16:53:44:59:C0   ev3 緑
+    //00:16:53:43:DE:A0   ev3 灰色
     String macAddress = "00:16:53:44:59:C0";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         spinnerSetting();
     }
+    //送信データの生成
     byte[] sendMessage(int num) {
         byte[] tele = new byte[21];
         tele[0] = (byte)19;
@@ -137,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
         //byte配列を返す
         return tele;
     }
+    //アプリを終了した時
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -152,11 +155,13 @@ public class MainActivity extends AppCompatActivity {
         //バイブレーションの宣言
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         //20ミリセックバイブする
-        vibrator.vibrate(20);
+        vibrator.vibrate(50);
         switch (view.getId()){
             //前進するとき
             case R.id.front:
                 sendBluetooth(1);
+                time(2);
+                sendBluetooth(0);
                 break;
             //止まるとき
             case R.id.stop:
@@ -180,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
+    //Bluetooth接続先に送信
     void sendBluetooth(int num){
         //ここで送信
         try {
@@ -190,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+    //接続を確立させる
     void connection(){
         // BTの準備 --------------------------------------------------------------
         // BTアダプタのインスタンスを取得
@@ -203,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
             // 接続に使用するプロファイルを指定
             mBtSocket = mBtDevice.createRfcommSocketToServiceRecord(
                     UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -219,19 +227,19 @@ public class MainActivity extends AppCompatActivity {
         }finally {
             if (connectFlag == 0){
                 Toast.makeText(this, "接続に成功！！！", Toast.LENGTH_LONG).show();
-
             }
         }
     }
     //spinner設定用メソッド
     void spinnerSetting (){
-
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // アイテムを追加します
         adapter.add("00:16:53:44:59:C0,eb3緑");
         adapter.add("00:16:53:44:69:AB,ev3青");
+        adapter.add("00:16:53:43:DE:A0,ev3灰色");
+
         //スピナーの関連付け
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
         // アダプターを設定します
@@ -239,8 +247,7 @@ public class MainActivity extends AppCompatActivity {
         // スピナーのアイテムが選択された時に呼び出されるコールバックリスナーを登録します
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view,
-                                       int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //スピナーを宣言
                 Spinner spinner = (Spinner) parent;
                 // 選択されたアイテムを取得
@@ -249,11 +256,20 @@ public class MainActivity extends AppCompatActivity {
                 String addressArray[] = item.split(",",0);
                 //macAddressにaddressを入れる
                 macAddress =addressArray[0];
-                //Log.d("aaaaaaaaaaaaa",macAddress);
             }
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
             }
         });
     }
+    //指定時間だけ画面の処理を止める
+    void time (int num){
+        //ミリ秒に変換する
+        num = num*1000;
+        try{
+            //1000ミリ秒Sleepする
+            Thread.sleep(num);
+        }catch(InterruptedException e){}
+    }
+
 }
