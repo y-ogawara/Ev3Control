@@ -12,16 +12,26 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import org.t_robop.y_ogawara.ev3control.ev3.AndroidComm;
+import org.t_robop.y_ogawara.ev3control.ev3.EV3Command;
+
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
-    private BluetoothAdapter mBluetoothAdapter; // BTアダプタ
+    private BluetoothAdapter mBtAdapter; // BTアダプタ
     private BluetoothDevice mBtDevice; // BTデバイス
     private BluetoothSocket mBtSocket; // BTソケット
     private OutputStream mOutput; // 出力ストリーム
+
+    int STOP = 0;
+    int FRONT = 1;
+    int BACK = 2;
+    int RIGHT = 3;
+    int LEFT = 4;
+    int TEST = 5;
+
 
     //00:16:53:44:69:AB   ev3 青
     //00:16:53:44:59:C0   ev3 緑
@@ -160,8 +170,6 @@ public class MainActivity extends AppCompatActivity {
             //前進するとき
             case R.id.front:
                 sendBluetooth(1);
-                time(2);
-                sendBluetooth(0);
                 break;
             //止まるとき
             case R.id.stop:
@@ -183,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.connect:
                 connection();
                 break;
+
         }
     }
     //Bluetooth接続先に送信
@@ -190,7 +199,9 @@ public class MainActivity extends AppCompatActivity {
         //ここで送信
         try {
             //ここでBluetooth送信してる
-            mOutput.write(sendMessage(num));
+            AndroidComm.mOutputStream.write(sendMessage(num));
+
+            //mOutput.write(sendMessage(num));
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -198,37 +209,61 @@ public class MainActivity extends AppCompatActivity {
     }
     //接続を確立させる
     void connection(){
-        // BTの準備 --------------------------------------------------------------
-        // BTアダプタのインスタンスを取得
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        // 相手先BTデバイスのインスタンスを取得
-        mBtDevice = mBluetoothAdapter.getRemoteDevice(macAddress);
 
-        // BTソケットのインスタンスを取得
+
+        mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        BluetoothDevice device = mBtAdapter.getRemoteDevice(macAddress);
+
+        AndroidComm.getInstance().setDevice(device); // Set device
+
+// Connect to EV3
         try {
-            // 接続に使用するプロファイルを指定
-            mBtSocket = mBtDevice.createRfcommSocketToServiceRecord(
-                    UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
+            EV3Command.open();
+            Toast.makeText(MainActivity.this, "接続成功！", Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(MainActivity.this, "エラーです", Toast.LENGTH_LONG).show();
+            //接続が失敗したらnullに
+            mBtAdapter = null;
+        }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        //接続に成功したかどうか
-        int connectFlag = 0;
-        try {
-            // ソケットを接続する
-            mBtSocket.connect();
-            mOutput = mBtSocket.getOutputStream(); // 出力ストリームオブジェクトを得る
-        } catch (IOException e) {
-            Toast.makeText(this, "接続に失敗しました", Toast.LENGTH_LONG).show();
-            connectFlag = 1;
-            e.printStackTrace();
-        }finally {
-            if (connectFlag == 0){
-                Toast.makeText(this, "接続に成功！！！", Toast.LENGTH_LONG).show();
-            }
-        }
+
+
+
+
+
+//        // BTの準備 --------------------------------------------------------------
+//        // BTアダプタのインスタンスを取得
+//        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//
+//        // 相手先BTデバイスのインスタンスを取得
+//        mBtDevice = mBluetoothAdapter.getRemoteDevice(macAddress);
+//
+//        // BTソケットのインスタンスを取得
+//        try {
+//            // 接続に使用するプロファイルを指定
+//            mBtSocket = mBtDevice.createRfcommSocketToServiceRecord(
+//                    UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        //接続に成功したかどうか
+//        int connectFlag = 0;
+//        try {
+//            // ソケットを接続する
+//            mBtSocket.connect();
+//            mOutput = mBtSocket.getOutputStream(); // 出力ストリームオブジェクトを得る
+//        } catch (IOException e) {
+//            Toast.makeText(this, "接続に失敗しました", Toast.LENGTH_LONG).show();
+//            connectFlag = 1;
+//            e.printStackTrace();
+//        }finally {
+//            if (connectFlag == 0){
+//                Toast.makeText(this, "接続に成功！！！", Toast.LENGTH_LONG).show();
+//            }
+//        }
     }
     //spinner設定用メソッド
     void spinnerSetting (){
@@ -262,14 +297,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    //指定時間だけ画面の処理を止める
-    void time (int num){
-        //ミリ秒に変換する
-        num = num*1000;
-        try{
-            //1000ミリ秒Sleepする
-            Thread.sleep(num);
-        }catch(InterruptedException e){}
-    }
+
 
 }

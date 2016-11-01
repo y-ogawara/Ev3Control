@@ -40,6 +40,7 @@
                 android:text="接続"
                 android:textSize="25dp"
                 android:onClick="btn"
+                android:layout_marginRight="10dp"
                 android:id="@+id/connect" />
             <Button
                 android:layout_width="100dp"
@@ -47,11 +48,14 @@
                 android:text="前進"
                 android:onClick="btn"
                 android:textSize="25dp"
-                android:id="@+id/front" />
+                android:id="@+id/front"
+                android:background="@drawable/color_move" />
             <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                />
+                android:layout_marginLeft="10dp"
+                android:id="@+id/test" />
         </LinearLayout>
 
         <LinearLayout
@@ -66,7 +70,9 @@
                 android:text="左回転"
                 android:onClick="btn"
                 android:textSize="25dp"
-                android:id="@+id/left" />
+                android:id="@+id/left"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/color_move" />
             <Button
                 android:layout_width="100dp"
                 android:layout_height="100dp"
@@ -74,14 +80,18 @@
                 android:textSize="25dp"
 
                 android:onClick="btn"
-                android:id="@+id/stop" />
+                android:id="@+id/stop"
+                android:background="@drawable/color_move" />
+
             <Button
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:text="右回転"
                 android:textSize="25dp"
+                android:layout_marginLeft="10dp"
                 android:onClick="btn"
-                android:id="@+id/right" />
+                android:id="@+id/right"
+                android:background="@drawable/color_move" />
 
         </LinearLayout>
 
@@ -91,13 +101,15 @@
             android:layout_height="match_parent"
             android:gravity="center|top"
             android:layout_weight="1">
+
             <Button
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:text="後退"
                 android:textSize="25dp"
                 android:onClick="btn"
-                android:id="@+id/back" />
+                android:id="@+id/back"
+                android:background="@drawable/color_move" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
