@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -297,6 +298,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
+    void test(){
+        Log.d("","");
+    }
 
 }

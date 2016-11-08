@@ -1,18 +1,71 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "24.0.0"
 
     defaultConfig {
+        //デフォルトで設定しておく内容
+        compileSdkVersion 23
+        buildToolsVersion "24.0.0"
         applicationId "org.t_robop.y_ogawara.ev3control"
-        minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
     }
-    buildTypes {
+
+    productFlavors {
+        // Define separate dev and prod product flavors.
+        dev {
+            //21以上からビルド時にキャッシュが効くようになっているので、21(Android5.0)以降の端末をdebugで使用している際はそちらで
+            minSdkVersion 21
+        }
+        prod {
+            //実際にリリースするときはAndroid4.0以上がほとんどなので、4.0から指定
+            minSdkVersion 14
+        }
+    }
+
+    // 追加
+    signingConfigs {
+        debug {
+            //ここにkeyStoreの設定を行うことでビルドを自動化出来る
+            //storeFile file("debug.keystore")
+            //storePassword "android"
+            //keyAlias "androiddebugkey"
+            //keyPassword "android"
+
+
+        }
         release {
+            // 追加
+            //storeFile file("release.keystore")
+            //storePassword "生成時に決めたpass"
+
+            //keyAlias "生成時に決めたkeyAlias"
+
+            //keyPassword "android"
+
+
+
+        }
+    }
+    buildTypes {
+        //debug時に使う内容
+        debug {
+            //apkのうしろにdebugを追加
+            applicationIdSuffix ".debug"
+            //デバック環境なのでdebug出来るように
+            debuggable true
+            //signingConfig signingConfigs.debug
+
+        }
+        release {
+            //本番環境なのでdebugできないように
+            debuggable false
+            //この設定をtrueにしないと証明書付きのapkが作成されない
+            zipAlignEnabled true
+            //ビルド時にkeystoreを自動で使う場合に書く
+            //signingConfig signingConfigs.release
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
