@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     int LEFT = 4;
     int TEST = 5;
 
+    int i = 0;
 
     //00:16:53:44:69:AB   ev3 青
     //00:16:53:44:59:C0   ev3 緑
@@ -59,97 +60,99 @@ public class MainActivity extends AppCompatActivity {
         if (num == 0) {   //Stop Motors at PortC & D
             tele[7] = (byte)0xA4;     //OUTPUT_POWER
             tele[8] = (byte)0;
-            tele[9] = (byte)4;     //Motor ID = PortC
+            tele[9] = (byte)2;     //Motor ID = PortC
             tele[10] = (byte)0;     //Motor Power
             tele[11] = (byte)0xA6;    //OUTPUT_START
             tele[12] = (byte)0;
-            tele[13] = (byte)4;     //Motor ID = PortC
+            tele[13] = (byte)2;     //Motor ID = PortC
 
             tele[14] = (byte)0xA4;     //OUTPUT_POWER
             tele[15] = (byte)0;
-            tele[16] = (byte)8;     //Motor ID = PortD
+            tele[16] = (byte)4;     //Motor ID = PortD
             tele[17] = (byte)0;     //Motor Power
             tele[18] = (byte)0xA6;    //OUTPUT_START
             tele[19] = (byte)0;
-            tele[20] = (byte)8;     //Motor ID = PortD
+            tele[20] = (byte)4;     //Motor ID = PortD
         }
 
         //進むとき
         if (num == 1) {    //Forward Motors at PortC & D
             tele[7] = (byte)0xA4;
             tele[8] = (byte)0x00;
-            tele[9] = (byte)4;
+            tele[9] = (byte)2;
             tele[10] = (byte)68;
             tele[11] = (byte)0xA6;
             tele[12] = (byte)0;
-            tele[13] = (byte)4;
+            tele[13] = (byte)2;
 
             tele[14] = (byte)0xA4;
             tele[15] = (byte)0x00;
-            tele[16] = (byte)8;
+            tele[16] = (byte)4;
             tele[17] = (byte)68;
             tele[18] = (byte)0xA6;
             tele[19] = (byte)0;
-            tele[20] = (byte)8;
+            tele[20] = (byte)4;
         }
         //バック
         if (num == 2) {    //Backward Motors at PortC & D
             tele[7] = (byte)0xA4;
             tele[8] = (byte)0x00;
-            tele[9] = (byte)4;
+            tele[9] = (byte)2;
             tele[10] = (byte)40;
             tele[11] = (byte)0xA6;
             tele[12] = (byte)0;
-            tele[13] = (byte)4;
+            tele[13] = (byte)2;
 
             tele[14] = (byte)0xA4;
             tele[15] = (byte)0x00;
-            tele[16] = (byte)8;
+            tele[16] = (byte)4;
             tele[17] = (byte)40;
             tele[18] = (byte)0xA6;
             tele[19] = (byte)0;
-            tele[20] = (byte)9;
+            tele[20] = (byte)4;
         }
 
         //右回転
         if (num == 3) {    //Turn Right = Forward Motor at PortC(Left) and Stop PortD(Right)
             tele[7] = (byte)0xA4;
             tele[8] = (byte)0x00;
-            tele[9] = (byte)4;
+            tele[9] = (byte)2;
             tele[10] = (byte)0;
             tele[11] = (byte)0xA6;
             tele[12] = (byte)0;
-            tele[13] = (byte)4;
+            tele[13] = (byte)2;
 
             tele[14] = (byte)0xA4;
             tele[15] = (byte)0x00;
-            tele[16] = (byte)8;
+            tele[16] = (byte)4;
             tele[17] = (byte)68;
             tele[18] = (byte)0xA6;
             tele[19] = (byte)0;
-            tele[20] = (byte)8;
+            tele[20] = (byte)4;
         }
         //左回転
         if (num == 4) {    //Turn Left = Forward Motor at PortD(Right) and Stop PortC(Left)
             tele[7] = (byte)0xA4;
             tele[8] = (byte)0x00;
-            tele[9] = (byte)4;
+            tele[9] = (byte)2;
             tele[10] = (byte)68;
             tele[11] = (byte)0xA6;
             tele[12] = (byte)0;
-            tele[13] = (byte)4;
+            tele[13] = (byte)2;
 
             tele[14] = (byte)0xA4;
             tele[15] = (byte)0x00;
-            tele[16] = (byte)8;
+            tele[16] = (byte)4;
             tele[17] = (byte)0;
             tele[18] = (byte)0xA6;
             tele[19] = (byte)0;
-            tele[20] = (byte)8;
+            tele[20] = (byte)4;
         }
         //byte配列を返す
         return tele;
     }
+
+
     //アプリを終了した時
     @Override
     protected void onDestroy() {
@@ -171,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
             //前進するとき
             case R.id.front:
                 sendBluetooth(1);
+
                 break;
             //止まるとき
             case R.id.stop:
