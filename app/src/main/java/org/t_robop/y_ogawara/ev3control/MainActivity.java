@@ -47,12 +47,13 @@ public class MainActivity extends AppCompatActivity {
     }
     //送信データの生成
     byte[] sendMessage(int num) {
+        i++;
         byte[] tele = new byte[21];
         tele[0] = (byte)19;
         tele[1] = (byte)0;
         tele[2] = (byte)0;
         tele[3] = (byte)0;
-        tele[4] = (byte)0;
+        tele[4] = (byte)0x80;
         tele[5] = (byte)0;
         tele[6] = (byte)0;
 
@@ -67,11 +68,11 @@ public class MainActivity extends AppCompatActivity {
             tele[13] = (byte)2;     //Motor ID = PortC
 
             tele[14] = (byte)0xA4;     //OUTPUT_POWER
-            tele[15] = (byte)0;
+            tele[15] = (byte)0;     //Layer master
             tele[16] = (byte)4;     //Motor ID = PortD
             tele[17] = (byte)0;     //Motor Power
             tele[18] = (byte)0xA6;    //OUTPUT_START
-            tele[19] = (byte)0;
+            tele[19] = (byte)0;     //Layer master
             tele[20] = (byte)4;     //Motor ID = PortD
         }
 
@@ -79,26 +80,28 @@ public class MainActivity extends AppCompatActivity {
         if (num == 1) {    //Forward Motors at PortC & D
             tele[7] = (byte)0xA4;
             tele[8] = (byte)0x00;
-            tele[9] = (byte)2;
-            tele[10] = (byte)68;
+            tele[9] = (byte)0x02;
+            tele[10] = (byte)0x1F; //速度
             tele[11] = (byte)0xA6;
-            tele[12] = (byte)0;
-            tele[13] = (byte)2;
+            tele[12] = (byte)0x00;
+            tele[13] = (byte)0x02;
 
             tele[14] = (byte)0xA4;
             tele[15] = (byte)0x00;
-            tele[16] = (byte)4;
-            tele[17] = (byte)68;
+            tele[16] = (byte)0x04;
+            tele[17] = (byte)0x1F;
             tele[18] = (byte)0xA6;
-            tele[19] = (byte)0;
-            tele[20] = (byte)4;
+            tele[19] = (byte)0x00;
+            tele[20] = (byte)0x04;
+            Log.d("iの値は",i+"  です");
         }
         //バック
         if (num == 2) {    //Backward Motors at PortC & D
+            Log.d("iの数は",i+"  です");
             tele[7] = (byte)0xA4;
             tele[8] = (byte)0x00;
             tele[9] = (byte)2;
-            tele[10] = (byte)40;
+            tele[10] = (byte)32;
             tele[11] = (byte)0xA6;
             tele[12] = (byte)0;
             tele[13] = (byte)2;
@@ -106,10 +109,12 @@ public class MainActivity extends AppCompatActivity {
             tele[14] = (byte)0xA4;
             tele[15] = (byte)0x00;
             tele[16] = (byte)4;
-            tele[17] = (byte)40;
+            tele[17] = (byte)32;
             tele[18] = (byte)0xA6;
             tele[19] = (byte)0;
             tele[20] = (byte)4;
+
+
         }
 
         //右回転
@@ -174,7 +179,6 @@ public class MainActivity extends AppCompatActivity {
             //前進するとき
             case R.id.front:
                 sendBluetooth(1);
-
                 break;
             //止まるとき
             case R.id.stop:
@@ -302,8 +306,92 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    void test(){
-        Log.d("","");
-    }
+    byte[] createByte(){
+        Log.d("iは",i+ "です");
+        byte[] msg = new byte[18];
+        msg[0] = (byte)16;
+        msg[1] = (byte)0;
+        msg[2] = (byte)0;//outputスピード
+        msg[3] = (byte)0;//レイヤーmaster
+        msg[4] = (byte)0x80;//
+        msg[5] = (byte)0;
+        msg[6] = (byte)0;
 
+        msg[7] = (byte)0xA4;     //OUTPUT_POWER
+        msg[8] = (byte)0x00;     //Layer master
+        msg[9] = (byte)6;     //Motor ID = PortD
+        msg[10] = (byte)0x00;     //Motor Power
+
+        msg[11] = (byte)0xA6;
+        msg[12] = (byte)0x000;
+        msg[13] = (byte)6;
+
+        msg[14] = (byte)0xA5;
+        msg[15] = (byte)0x00;
+        msg[16] = (byte)6;
+        //msg[17] = (byte)0x81;
+        msg[17] = (byte)31;
+
+
+//        msg[14] = (byte)0xA4;
+//        msg[15] = (byte)0x00;
+//        msg[16] = (byte)4;
+//        msg[17] = (byte)100;
+//        msg[18] = (byte)0xA6;
+//        msg[19] = (byte)0;
+//        msg[20] = (byte)4;
+        return msg;
+    }
+//    public void test(View v ){
+//        //ここで送信
+//        try {
+//            //ここでBluetooth送信してる
+//            AndroidComm.mOutputStream.write(speedByte());
+//
+//            //mOutput.write(sendMessage(num));
+//        } catch (IOException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//    }
+    byte[] stopByte(){
+        Log.d("iは",i+ "です");
+        byte[] msg = new byte[11];
+        msg[0] = (byte)9;
+        msg[1] = (byte)0;//空白
+        msg[2] = (byte)0;//空白
+        msg[3] = (byte)0;//レイヤーmaster
+        msg[4] = (byte)0x80;//NO_Reply
+        msg[5] = (byte)0;//空白
+        msg[6] = (byte)0;//空白
+
+        msg[7] = (byte)0xA3;     //OUTPUT_STOP
+        msg[8] = (byte)0;     //Layer master
+        msg[9] = (byte)6;     //Motor ID = PortB+C
+        msg[10] = 1;     //break
+        return msg;
+    }
+    byte[] speedByte(){
+        byte[] msg = new byte[16];
+        msg[0] = (byte)14;
+        msg[1] = (byte)0x00;//空白
+        msg[2] = (byte)0x00;//空白
+        msg[3] = (byte)0x00;//レイヤーmaster
+        msg[4] = (byte)0x80;//NO_Reply
+        msg[5] = (byte)0x00;//空白
+        msg[6] = (byte)0x00;//空白
+
+        msg[7] = (byte)0xA5;
+        msg[8] = (byte)0x00;
+        msg[9] = (byte)6;
+
+
+        msg[10] = (byte)0x81;     //
+        msg[11] = (byte)31;     //Layer master
+        msg[12] = (byte)0xA6;     //Motor ID = PortB+C
+        msg[14] = (byte)0x00;
+        msg[15] = (byte)2;
+
+        return msg;
+    }
 }
